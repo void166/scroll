@@ -1,0 +1,66 @@
+.enquire {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  padding: clamp(6rem, 18vh, 12rem) 0;
+}
+
+.enquire__inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.4rem, 4vh, 2.4rem);
+}
+
+.enquire__title {
+  margin: clamp(0.6rem, 2vh, 1.2rem) 0 clamp(1rem, 3vh, 2rem);
+  max-width: 14ch;
+}
+
+.enquire__row {
+  opacity: 0;
+}
+
+.enquire__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.6rem, 1.5vw, 1.2rem);
+  align-self: flex-start;
+  opacity: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 4.6vw, 3.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  padding-bottom: 0.15em;
+  border-bottom: 1px solid var(--line-light);
+  transition: border-color 0.5s var(--ease-out), color 0.5s var(--ease-out);
+  /* An email address must never be the thing that overflows the page. */
+  overflow-wrap: anywhere;
+}
+
+.enquire__cta:hover {
+  border-color: currentColor;
+  color: var(--ember);
+}
+
+.enquire__cta svg {
+  flex: none;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.enquire__cta:hover svg {
+  transform: translate(3px, -3px);
+}
+
+.enquire__meta {
+  display: flex;
+  gap: clamp(1rem, 4vw, 3rem);
+  flex-wrap: wrap;
+  margin-top: clamp(1rem, 4vh, 2.5rem);
+}
+
+@media (max-width: 520px) {
+  .enquire__meta {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}

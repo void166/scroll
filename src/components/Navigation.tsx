@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { gsap } from '../animations/gsap';
 import { trackChapters } from '../animations/scrollAnimations';
-import { CHAPTERS } from '../data/scenes';
+import { NAV_SECTIONS, BRAND } from '../data/site';
 import '../styles/navigation.css';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function Navigation({ ready }: Props) {
-  const [chapter, setChapter] = useState<string>(CHAPTERS[0].id);
+  const [chapter, setChapter] = useState<string>(NAV_SECTIONS[0].id);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
@@ -23,9 +23,9 @@ export function Navigation({ ready }: Props) {
 
   const index = Math.max(
     0,
-    CHAPTERS.findIndex((c) => c.id === chapter)
+    NAV_SECTIONS.findIndex((c) => c.id === chapter)
   );
-  const current = CHAPTERS[index];
+  const current = NAV_SECTIONS[index];
 
   useEffect(() => {
     if (!ready) return;
@@ -99,8 +99,8 @@ export function Navigation({ ready }: Props) {
     <>
       <header className="nav" ref={rootRef}>
         <div className="nav__item nav__brand">
-          <button onClick={() => goTo('hero')} data-cursor="link">
-            Vela&nbsp;Armon
+          <button onClick={() => goTo('film')} data-cursor="link">
+            {BRAND.name}
           </button>
         </div>
 
@@ -112,7 +112,7 @@ export function Navigation({ ready }: Props) {
             <span ref={labelRef}>{current.label}</span>
           </span>
           <span className="nav__index numeral">
-            {String(CHAPTERS.length).padStart(2, '0')}
+            {String(NAV_SECTIONS.length).padStart(2, '0')}
           </span>
         </div>
 
@@ -130,7 +130,7 @@ export function Navigation({ ready }: Props) {
 
       <div className="menu" ref={menuRef}>
         <nav className="menu__list">
-          {CHAPTERS.map((c, i) => (
+          {NAV_SECTIONS.map((c, i) => (
             <button
               key={c.id}
               className="menu__link"

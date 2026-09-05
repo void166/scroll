@@ -1,0 +1,261 @@
+/* The reel: ~9 screens of scroll for 480 frames (≈1.8vh per frame). */
+.film {
+  height: 940vh;
+}
+
+.film__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.film__canvas-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.film__canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Footage is bright and busy; type needs a floor to stand on — but only
+   under the type. Two mirrored layers, cross-faded by the timeline. */
+.film__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+}
+
+.film__scrim--left {
+  background:
+    linear-gradient(
+      96deg,
+      rgba(8, 12, 15, 0.9) 0%,
+      rgba(8, 12, 15, 0.45) 38%,
+      rgba(8, 12, 15, 0) 66%
+    ),
+    linear-gradient(to top, rgba(8, 12, 15, 0.6), transparent 34%);
+}
+
+.film__scrim--right {
+  opacity: 0;
+  background:
+    linear-gradient(
+      264deg,
+      rgba(8, 12, 15, 0.9) 0%,
+      rgba(8, 12, 15, 0.45) 38%,
+      rgba(8, 12, 15, 0) 66%
+    ),
+    linear-gradient(to top, rgba(8, 12, 15, 0.6), transparent 34%);
+}
+
+.film__intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: clamp(5.5rem, 12vh, 8rem);
+  padding-bottom: clamp(1.6rem, 5vh, 3rem);
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+.film__title {
+  margin: 0;
+  max-width: 14ch;
+  text-shadow: 0 0.02em 0.5em rgba(8, 12, 15, 0.45);
+}
+
+.film__cue {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.film__cue-line {
+  display: block;
+  width: clamp(3rem, 7vw, 6rem);
+  height: 1px;
+  background: rgba(243, 239, 230, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.film__cue-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bone);
+  animation: film-cue 2.6s var(--ease-out) infinite;
+}
+
+@keyframes film-cue {
+  0% { transform: translateX(-100%); }
+  55% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+/* Every chapter occupies the same optical slot; one is legible at a time. */
+.film__copy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  pointer-events: none;
+}
+
+.chapter {
+  grid-area: 1 / 1;
+  /* Not `ch` — that resolves against this element's sans font while the
+     headline inside runs several times larger. */
+  max-width: min(46rem, 92%);
+}
+
+.chapter--right {
+  justify-self: end;
+  text-align: right;
+}
+
+.chapter--centre {
+  justify-self: center;
+  text-align: center;
+}
+
+.chapter__meta {
+  display: flex;
+  gap: 1.1rem;
+  align-items: baseline;
+  margin-bottom: clamp(1rem, 3vh, 1.8rem);
+  opacity: 0;
+}
+
+.chapter--right .chapter__meta {
+  justify-content: flex-end;
+}
+
+.chapter--centre .chapter__meta {
+  justify-content: center;
+}
+
+.chapter__index {
+  color: var(--ember);
+  letter-spacing: 0.2em;
+}
+
+.chapter__title {
+  font-size: clamp(2.4rem, 6.4vw, 6.6rem);
+  line-height: 0.98;
+  margin: 0 0 clamp(1.4rem, 4vh, 2.4rem);
+  text-shadow: 0 0.02em 0.5em rgba(8, 12, 15, 0.4);
+}
+
+.chapter__body {
+  max-width: 38ch;
+  margin: 0;
+  opacity: 0;
+  font-size: clamp(0.92rem, 1.05vw, 1.05rem);
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(243, 239, 230, 0.82);
+}
+
+.chapter--right .chapter__body {
+  margin-left: auto;
+}
+
+.chapter--centre .chapter__body {
+  margin-inline: auto;
+}
+
+.film__hud {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(1.4rem, 4vh, 2.4rem);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  pointer-events: none;
+}
+
+.film__track {
+  position: relative;
+  height: 1px;
+  background: rgba(243, 239, 230, 0.2);
+}
+
+.film__track > span {
+  position: absolute;
+  inset: 0;
+  background: var(--ember);
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
+}
+
+@media (max-width: 860px) {
+  .film {
+    height: 760vh;
+  }
+
+  .chapter,
+  .chapter--right,
+  .chapter--centre {
+    justify-self: start;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .chapter--right .chapter__meta,
+  .chapter--centre .chapter__meta {
+    justify-content: flex-start;
+  }
+
+  .chapter--right .chapter__body,
+  .chapter--centre .chapter__body {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .chapter__title {
+    font-size: clamp(2.2rem, 10.5vw, 3.6rem);
+    line-height: 1.02;
+  }
+
+  .chapter__body {
+    max-width: 34ch;
+    color: rgba(243, 239, 230, 0.88);
+  }
+
+  /* Portrait crop puts the horizon high: drop the copy into the lower
+     third and weight the scrim under it so the sky stays clean. */
+  .film__copy {
+    align-content: end;
+    padding-bottom: 16vh;
+  }
+
+  .film__scrim--left,
+  .film__scrim--right {
+    background: linear-gradient(
+      to top,
+      rgba(8, 12, 15, 0.94) 0%,
+      rgba(8, 12, 15, 0.72) 26%,
+      rgba(8, 12, 15, 0.12) 58%,
+      transparent 76%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film__cue-line::after {
+    animation: none;
+    transform: translateX(0);
+  }
+}

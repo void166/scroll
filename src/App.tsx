@@ -1,19 +1,16 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ScrollTrigger } from './animations/gsap';
 import { initBackgroundScheduler } from './animations/scrollAnimations';
-import { preload, IS_COMPACT } from './lib/frameLoader';
-import { SEQUENCES, PLATES } from './data/scenes';
+import { preloadGate, startStreaming, IS_COMPACT } from './lib/frameLoader';
+import { JOURNEY, PLATES } from './data/site';
 
 import { Loader } from './components/Loader';
 import { Navigation } from './components/Navigation';
 import { Cursor } from './components/Cursor';
-import { Hero } from './components/Hero';
-import { Intro } from './components/Intro';
-import { StorySection } from './components/StorySection';
-import { SequenceSection } from './components/SequenceSection';
-import { Studies } from './components/Studies';
-import { Plate } from './components/Plate';
-import { Statement } from './components/Statement';
+import { Film } from './components/Film';
+import { Journeys } from './components/Journeys';
+import { Approach } from './components/Approach';
+import { Enquire } from './components/Enquire';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -27,11 +24,8 @@ export default function App() {
     document.body.classList.add('is-loading');
     window.scrollTo(0, 0);
 
-    preload(
-      {
-        sequences: [SEQUENCES.obsidian, SEQUENCES.drape],
-        stills: Object.values(PLATES),
-      },
+    preloadGate(
+      { sequence: JOURNEY, stills: Object.values(PLATES) },
       (value) => {
         if (!cancelled) setProgress(value);
       }
@@ -50,14 +44,14 @@ export default function App() {
     // Sticky stages and lazy images settle a beat after the curtain lifts.
     const id = window.setTimeout(() => ScrollTrigger.refresh(), 240);
 
-    return () => {
-      window.clearTimeout(id);
-    };
+    return () => window.clearTimeout(id);
   }, [loading]);
 
   const handleLoaderDone = () => {
     document.body.classList.remove('is-loading');
     setLoading(false);
+    // The rest of the reel arrives behind the viewer, nearest-frame first.
+    startStreaming(JOURNEY);
   };
 
   return (
@@ -70,13 +64,10 @@ export default function App() {
       <Navigation ready={!loading} />
 
       <main>
-        <Hero ready={!loading} />
-        <Intro />
-        <StorySection />
-        <SequenceSection />
-        <Studies />
-        <Plate />
-        <Statement />
+        <Film ready={!loading} />
+        <Journeys />
+        <Approach />
+        <Enquire />
         <Footer />
       </main>
 

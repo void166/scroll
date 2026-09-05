@@ -1,7 +1,8 @@
-# Vela Armon — Collection No. 07
+# Vela — Private Travel
 
-A scroll-driven editorial site. Scroll position is the only input: it drives
-two canvas frame sequences, every pinned scene, and the page's background tone.
+A scroll-driven travel site. One continuous aerial reel runs from takeoff to
+last light while five chapters of copy fade through on top of it; the
+itineraries, the approach and the enquiry sit underneath.
 
 React 19 · TypeScript · Vite · GSAP + ScrollTrigger · Canvas 2D · Lucide.
 No UI framework, no scroll-hijacking library.
@@ -10,153 +11,118 @@ No UI framework, no scroll-hijacking library.
 npm install
 npm run dev        # http://localhost:5173
 npm run build
-npm run frames     # re-render every frame and still (~2 min on 16 cores)
+npm run frames     # re-encode the reel from the source plates (~30s)
 ```
+
+## The film
+
+`src/components/Film.tsx` pins a canvas for about nine screens of scroll and
+scrubs the whole reel across it. The five chapters are fractions of that
+scroll, declared in `src/data/site.ts`:
+
+| # | Chapter    | Scroll     |
+| - | ---------- | ---------- |
+| 1 | Takeoff    | 0 – 20 %   |
+| 2 | Coastline  | 20 – 40 %  |
+| 3 | The lagoon | 40 – 60 %  |
+| 4 | Arrival    | 60 – 80 %  |
+| 5 | Last light | 80 – 100 % |
+
+Because the windows are fractions, the shipped frame count can change without
+touching them — re-cut the reel and the chapters still land in the same place.
+
+```
+scroll  →  ScrollTrigger (scrub)  →  GSAP timeline  →  canvas blit
+```
+
+React renders once and gets out of the way. Nothing in a scroll path calls
+`setState`: the frame index, the counter, the progress bar and the page
+background are written straight to the DOM or the canvas from GSAP callbacks.
+
+## Frames: the tradeoff that matters
+
+The source is 480 plates at 1920×1080, 84 MB. That cannot go on a website as
+it is, and the interesting question is *where* to spend the budget.
+
+**Resolution beats frame count.** The canvas cross-dissolves neighbouring
+frames, so halving the number of frames is invisible in motion — while halving
+the resolution is obvious the moment anything holds still. The first cut of
+this site shipped 480 frames at 1280×720 and looked soft; the same byte budget
+spent the other way is sharp:
+
+| | Frames | Size | Total |
+| --- | --- | --- | --- |
+| First attempt | 480 | 1280×720 | 40 MB, visibly soft |
+| **Shipped (desktop)** | **240** | **1600×900** | **21 MB** |
+| **Shipped (phones)** | **160** | **960×1440** | **9.8 MB** |
+
+The phone set is cropped to 2:3 rather than letterboxed, which is close enough
+to a phone's own aspect that the canvas barely has to upscale — upscaling is
+what actually makes a frame look soft, more than the encoder does.
+
+To change any of this, edit the two loops in `tools/frames.mjs` and update
+`count` / `mobileCount` in `src/data/site.ts` to match, then `npm run frames`.
+
+### Progressive loading
+
+21 MB behind a loading screen is not an option, so `src/lib/frameLoader.ts`
+loads in two stages:
+
+1. **Gate** — an opening run of frames plus every Nth frame across the rest,
+   so the first chapter is smooth and scrubbing ahead always lands on
+   something. This is all the loading screen waits for.
+2. **Stream** — everything else in the background, always fetching the pending
+   frame *nearest the viewer's current position*. Scroll forward and the reel
+   fills in ahead of you.
+
+Until a frame arrives the canvas draws the nearest one that has, so the film
+is watchable from the first second and sharpens in resolution of movement as
+it fills. `window.frameStats()` reports progress in dev.
 
 ## Deploying to Vercel
 
-Zero configuration beyond what is committed. Vercel detects Vite, runs
-`npm run build`, and serves `dist`.
-
-**From the dashboard:** push this repo to GitHub/GitLab, then *Add New →
-Project* and import it. Leave every build setting on its default —
-[`vercel.json`](./vercel.json) already pins the framework, build command and
-output directory.
-
-**From the CLI:**
+Vercel detects Vite, runs `npm run build`, serves `dist`. Push to a git host
+and import, or:
 
 ```bash
-npm i -g vercel
-vercel          # preview deploy
-vercel --prod   # production
+npx vercel --prod
 ```
 
-### One thing to set
+Set `VITE_SITE_URL` to the final domain (no trailing slash) so social cards get
+absolute URLs; `vite.config.ts` rewrites the `__SITE_URL__` tokens in
+`index.html` at build time, falling back to Vercel's own domain.
 
-Add an environment variable so social cards get absolute URLs:
-
-| Variable | Value |
-| --- | --- |
-| `VITE_SITE_URL` | `https://your-domain.com` (no trailing slash) |
-
-Without it the build falls back to Vercel's own production domain, and failing
-that to root-relative `og:image` URLs — which work in some scrapers and not
-others. `vite.config.ts` resolves this at build time and rewrites the
-`__SITE_URL__` tokens in `index.html`.
-
-### Notes
-
-- **Frame caching.** `/frames/*` and `/stills/*` are served
-  `max-age=31536000, immutable`. Filenames are stable, so if you re-run
-  `npm run frames` and redeploy, returning visitors keep the old frames until
-  the cache expires. Rename the directory (`obsidian-v2/`) when you re-cut a
-  sequence.
-- **`sharp` is a devDependency** and Vercel will install it, though nothing in
-  the build imports it — it is only used by `npm run frames`. The lockfile
-  carries the Linux binaries, so `npm ci` resolves on their build image. Drop
-  it from `package.json` if you would rather not pay the install time and only
-  re-render frames locally.
-- **No router**, so no SPA rewrite is configured. If you add one, add a
-  `rewrites` entry sending everything to `/index.html`.
-- The frames are committed to `public/` — they are the site, not build output.
-  Don't gitignore them.
-
-## How the scroll pipeline works
-
-```
-scroll  →  ScrollTrigger (scrub)  →  GSAP timeline  →  canvas blit / transform
-```
-
-React renders the page once and then gets out of the way. Nothing in a scroll
-path calls `setState`: the frame index, the sequence counter, the story
-progress read-out and the background colour are all written straight to the
-DOM or the canvas from GSAP callbacks. The only per-scroll React state on the
-whole page is the navigation's chapter label, which changes seven times.
-
-### `FrameSequence`
-
-A reusable canvas bound to a scroll window.
-
-```tsx
-<FrameSequence
-  spec={SEQUENCES.obsidian}
-  trigger={sectionRef}
-  start="top top"
-  end="bottom bottom"
-  scrub={0.8}
-  onProgress={(p, frame, total) => { /* write to the DOM, never to state */ }}
-/>
-```
-
-It owns exactly one ScrollTrigger, created inside a `gsap.context()` that is
-reverted on unmount. `useFrameSequence` handles the rest: DPR-aware sizing via
-`ResizeObserver`, cover-fit drawing, and a cross-dissolve between adjacent
-frames so 60 stills read as continuous motion rather than a flipbook.
-
-Note that the setup runs in `useEffect`, not `useLayoutEffect`. The trigger is
-an **ancestor** element, and React attaches a parent's ref only after its
-children's layout effects have run — reading it there hands you `null` and the
-ScrollTrigger is silently never created.
-
-### Pinning
-
-Scenes pin with CSS `position: sticky`, not `ScrollTrigger.pin`. No pin-spacer,
-no reflow on refresh, and scrubbing is unaffected.
-
-This is why `html` uses `overflow-x: clip` rather than `overflow-x: hidden`:
-`hidden` makes the root a scroll container, and every sticky stage on the page
-then sticks to *that* instead of the viewport — which looks exactly like
-sticky being ignored.
-
-### Background
-
-One fixed `.backdrop` element behind everything, tweened between the tones
-declared by `[data-bg]` on each section. A section can widen or delay its own
-handover with `data-bg-start` / `data-bg-end` when the default reads badly.
-
-`<body>` deliberately has no background: a background there paints in the root
-stacking context *above* negative-z-index children, which would hide the
-backdrop permanently.
-
-## Frames
-
-The sequences are rendered, not filmed. `tools/engine.mjs` is a small CPU
-raymarcher — signed distance fields, soft shadows, ACES tone mapping — and
-`tools/render.mjs` runs it across worker threads and encodes WebP.
-
-| Sequence   | Desktop        | Compact       |
-| ---------- | -------------- | ------------- |
-| `obsidian` | 60 × 1440×810  | 30 × 828×1104 |
-| `drape`    | 48 × 1440×810  | 24 × 828×1104 |
-
-Everything the loader waits on totals **under 2 MB**. Compact devices get half
-the frames at a portrait crop; the choice is made once at boot in
-`lib/frameLoader.ts` and is deliberately sticky for the session.
-
-To art-direct: edit the SDFs or the `paramsA` / `paramsB` camera
-choreography in `tools/engine.mjs`, then `npm run frames`.
+`/frames/*` and `/stills/*` are served `immutable` for a year. Filenames are
+stable, so if you re-cut the reel, rename the directory rather than relying on
+returning visitors to re-fetch.
 
 ## Layout
 
 ```
 src/
-├── animations/     gsap.ts (plugin registration), scrollAnimations.ts (the
-│                   reveal/parallax/background vocabulary — no React)
-├── components/     one file per section, plus FrameSequence, Loader,
-│                   Navigation, Cursor, TextReveal
-├── data/scenes.ts  asset paths, chapters, and every word on the page
+├── animations/     gsap.ts, scrollAnimations.ts (reveal/parallax/background
+│                   vocabulary — none of it touches React)
+├── components/     Film + the sections below it, plus FrameSequence,
+│                   Loader, Navigation, Cursor, TextReveal
+├── data/site.ts    every asset path and every word on the page
 ├── hooks/          useFrameSequence — canvas engine, zero React state
-├── lib/            frameLoader — decode-once cache + progress
+├── lib/            frameLoader — gate, stream, nearest-ready fallback
 └── styles/         global.css (design system) + one sheet per component
 ```
 
 `global.css` must be imported before `App` in `main.tsx`; component sheets load
-through `App`, and the later sheet wins ties such as `.display { margin: 0 }`
-against a component's own margin.
+through `App`, and the later sheet wins ties such as `.display { margin: 0 }`.
 
-## Accessibility and fallbacks
+## Notes
 
-- `prefers-reduced-motion` skips the reveal animations and the grain.
-- The custom cursor is never mounted on coarse pointers.
-- Text masks clip on the block axis only (`clip-path`, not `overflow: hidden`),
-  so italics and large serifs keep their side bearings.
+- **All copy is placeholder** — brand name, itineraries, prices, address and
+  contact details are invented. They live in `src/data/site.ts`.
+- The enquiry is a `mailto:` rather than a form, because there is no backend
+  and a form that silently does nothing is worse than no form.
+- Stages pin with CSS `position: sticky`, not `ScrollTrigger.pin`. This is why
+  the root uses `overflow-x: clip` and never `hidden` — `hidden` makes the root
+  a scroll container and every sticky stage silently stops sticking.
+- `<body>` deliberately has no background: one there would paint above the
+  negative-z-index `.backdrop` and freeze the page tone.
+- `prefers-reduced-motion` skips the reveals and the grain; the custom cursor
+  never mounts on coarse pointers.

@@ -9,7 +9,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { gsap } from '../animations/gsap';
 import { useFrameSequence } from '../hooks/useFrameSequence';
-import type { SequenceSpec } from '../data/scenes';
+import type { SequenceSpec } from '../data/site';
 
 export interface FrameSequenceHandle {
   /** the <canvas> itself, so parents can transform it on their own timelines */

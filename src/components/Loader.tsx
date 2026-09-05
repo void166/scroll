@@ -7,6 +7,7 @@
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { gsap } from '../animations/gsap';
+import { BRAND } from '../data/site';
 import '../styles/loader.css';
 
 interface Props {
@@ -104,15 +105,15 @@ export function Loader({ progress, onComplete }: Props) {
       <div className="loader__inner">
         <h1 className="loader__title display display--md">
           <span className="loader__line">
-            <span>Vela</span>
+            <span>{BRAND.name}</span>
           </span>
           <span className="loader__line">
-            <span className="italic">Armon</span>
+            <span className="italic">Private Travel</span>
           </span>
         </h1>
 
         <div className="loader__meta">
-          <span className="numeral">Collection No. 07</span>
+          <span className="numeral">Loading the reel</span>
           <span className="loader__count numeral" ref={countRef}>
             000
           </span>

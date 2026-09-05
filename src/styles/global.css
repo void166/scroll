@@ -4,13 +4,16 @@
    ========================================================================== */
 
 :root {
-  --ink: #0a0a0b;
-  --ink-soft: #131315;
-  --bone: #ece7df;
-  --bone-soft: #f4f0e9;
-  --dust: #8e8880;
-  --line-dark: rgba(236, 231, 223, 0.16);
-  --line-light: rgba(10, 10, 11, 0.14);
+  /* Pulled from the footage: night water, wet sand, and the ember the sun
+     leaves on the cloud deck. */
+  --ink: #0b0f12;
+  --ink-soft: #141a1e;
+  --bone: #f3efe6;
+  --bone-soft: #faf7f1;
+  --dust: #8a857a;
+  --ember: #c2703c;
+  --line-dark: rgba(243, 239, 230, 0.18);
+  --line-light: rgba(11, 15, 18, 0.14);
 
   --serif: "Cormorant Garamond", "Times New Roman", Times, serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -94,8 +97,8 @@ a {
 }
 
 ::selection {
-  background: var(--bone);
-  color: var(--ink);
+  background: var(--ember);
+  color: var(--bone);
 }
 
 /* --------------------------------------------------------------------------
@@ -120,7 +123,7 @@ a {
   height: 200%;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.24;
+  opacity: 0.13;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
   animation: grain-shift 0.7s steps(1) infinite;
@@ -196,7 +199,7 @@ a {
   line-height: 1.75;
   font-weight: 300;
   letter-spacing: 0.005em;
-  color: rgba(236, 231, 223, 0.72);
+  color: rgba(243, 239, 230, 0.74);
   max-width: var(--measure);
   margin: 0;
 }
@@ -215,15 +218,15 @@ a {
 }
 
 .on-light .eyebrow {
-  color: rgba(10, 10, 11, 0.45);
+  color: rgba(11, 15, 18, 0.5);
 }
 
 .on-light .body-text {
-  color: rgba(10, 10, 11, 0.66);
+  color: rgba(11, 15, 18, 0.7);
 }
 
 .on-light .numeral {
-  color: rgba(10, 10, 11, 0.45);
+  color: rgba(11, 15, 18, 0.5);
 }
 
 /* --------------------------------------------------------------------------

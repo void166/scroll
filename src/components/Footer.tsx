@@ -7,20 +7,15 @@ import { useLayoutEffect, useRef } from 'react';
 import { ArrowUpRight, ArrowUp } from 'lucide-react';
 import { gsap } from '../animations/gsap';
 import { fadeUp, revealLines } from '../animations/scrollAnimations';
+import { BRAND } from '../data/site';
 import '../styles/footer.css';
 
 const COLUMNS = [
-  {
-    title: 'Studio',
-    items: ['12 Rue Barbette', 'Paris III', 'By appointment'],
-  },
-  {
-    title: 'Enquiries',
-    items: ['studio@velaarmon.com', '+33 1 44 78 12 33'],
-  },
+  { title: 'Office', items: [...BRAND.address, 'Mon–Fri, 9–6 WITA'] },
+  { title: 'Enquiries', items: [BRAND.email, BRAND.phone] },
 ];
 
-const LINKS = ['Instagram', 'Journal', 'Stockists'];
+const LINKS = ['Instagram', 'Field notes', 'Terms'];
 
 export function Footer() {
   const ref = useRef<HTMLElement>(null);
@@ -52,7 +47,7 @@ export function Footer() {
   return (
     <footer
       className="section footer"
-      data-bg="#0a0a0b"
+      data-bg="#0b0f12"
       /* Hold the bone until the closing statement has actually left. */
       data-bg-start="top 65%"
       data-bg-end="top 22%"
@@ -94,20 +89,20 @@ export function Footer() {
               className="footer__link"
             >
               <ArrowUp size={12} strokeWidth={1.25} />
-              Back to the opening
+              Back to the top
             </button>
           </div>
         </div>
 
         <h2 className="footer__mark display">
           <span className="reveal-line">
-            <span>Vela Armon</span>
+            <span>{BRAND.name}</span>
           </span>
         </h2>
 
         <div className="footer__base numeral">
           <span>© MMXXVI</span>
-          <span>Collection No. 07 — Obsidian</span>
+          <span>{BRAND.descriptor}</span>
         </div>
       </div>
     </footer>

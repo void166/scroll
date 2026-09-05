@@ -21,7 +21,8 @@ function resolve(el: El): Element | null {
    ------------------------------------------------------------------------- */
 
 export interface RevealOptions {
-  trigger?: Element;
+  /** element or selector; ScrollTrigger accepts either */
+  trigger?: Element | string;
   start?: string;
   delay?: number;
   stagger?: number;

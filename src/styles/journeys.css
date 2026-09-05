@@ -1,0 +1,164 @@
+.journeys {
+  padding: clamp(6rem, 18vh, 12rem) 0 clamp(5rem, 14vh, 9rem);
+}
+
+.journeys__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: end;
+  margin-bottom: clamp(4rem, 12vh, 8rem);
+}
+
+.journeys__title {
+  grid-column: 2;
+  margin: 0;
+  max-width: 16ch;
+}
+
+.journeys__head > .numeral {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.journeys__lede {
+  grid-column: 2;
+  max-width: 46ch;
+  margin-top: clamp(1.4rem, 4vh, 2.4rem);
+}
+
+.journeys__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.journey {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+  padding: clamp(3rem, 9vh, 6rem) 0;
+}
+
+/* Alternate the spread so the column never reads as a list of cards. */
+.journey:nth-child(even) .journey__body {
+  order: 2;
+}
+
+.journey__rule {
+  grid-column: 1 / -1;
+  transform-origin: left;
+  margin-bottom: clamp(2rem, 6vh, 3.5rem);
+}
+
+.journey__facts {
+  display: flex;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin-bottom: clamp(1.2rem, 3vh, 2rem);
+}
+
+.journey__facts > * {
+  opacity: 0;
+}
+
+.journey__name {
+  font-size: clamp(1.9rem, 3.8vw, 3.4rem);
+  line-height: 1.02;
+  margin: 0 0 clamp(1.2rem, 3vh, 1.8rem);
+  max-width: 14ch;
+}
+
+.journey__copy {
+  max-width: 42ch;
+}
+
+.journey__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(1.8rem, 5vh, 3rem);
+  max-width: 42ch;
+}
+
+.journey__price {
+  opacity: 0;
+  color: var(--ember);
+}
+
+.journey__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  opacity: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--line-light);
+  transition: border-color 0.45s var(--ease-out);
+}
+
+.journey__link:hover {
+  border-color: currentColor;
+}
+
+.journey__link svg {
+  transition: transform 0.45s var(--ease-out);
+}
+
+.journey__link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.journey__plate {
+  margin: 0;
+  overflow: hidden;
+}
+
+.journey__plate--wide {
+  aspect-ratio: 8 / 5;
+}
+
+.journey__plate--tall {
+  aspect-ratio: 4 / 5;
+}
+
+.journey__plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, clip-path, filter;
+}
+
+@media (max-width: 860px) {
+  .journeys__head {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .journeys__title,
+  .journeys__lede,
+  .journeys__head > .numeral {
+    grid-column: 1;
+  }
+
+  .journey {
+    grid-template-columns: 1fr;
+    gap: clamp(1.6rem, 6vw, 2.5rem);
+  }
+
+  /* Picture first on a phone — it is what sells the itinerary. */
+  .journey:nth-child(even) .journey__body,
+  .journey__body {
+    order: 2;
+  }
+
+  .journey__plate {
+    order: 1;
+  }
+
+  .journey__foot {
+    max-width: none;
+  }
+}
