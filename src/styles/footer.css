@@ -1,0 +1,108 @@
+.footer {
+  /* A footer shorter than the viewport can never finish its background
+     handover before the document runs out of scroll, so it takes a full
+     screen — which the wordmark wants anyway. */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(4rem, 12vh, 8rem) 0 clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.footer__rule {
+  transform-origin: left;
+  margin-bottom: clamp(2.5rem, 8vh, 5rem);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.6rem, 4vw, 3rem);
+  margin-bottom: clamp(4rem, 16vh, 10rem);
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  color: rgba(236, 231, 223, 0.72);
+  /* An email address is one unbreakable word wider than a narrow column.
+     `anywhere` also lets the grid track shrink below it. */
+  overflow-wrap: anywhere;
+}
+
+.footer__col--top {
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  color: rgba(236, 231, 223, 0.72);
+  transition: color 0.4s var(--ease-out);
+}
+
+.footer__link:hover {
+  color: var(--bone);
+}
+
+.footer__link svg {
+  transition: transform 0.45s var(--ease-out);
+}
+
+.footer__link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.footer__col--top .footer__link:hover svg {
+  transform: translateY(-3px);
+}
+
+/* Wordmark set to the full measure — the last big gesture on the page. */
+.footer__mark {
+  margin: 0 0 clamp(1.5rem, 5vh, 3rem);
+  font-size: clamp(2.6rem, 15.5vw, 17rem);
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+
+.footer__base {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: clamp(1rem, 3vh, 2rem);
+  border-top: 1px solid var(--line-dark);
+}
+
+@media (max-width: 860px) {
+  .footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer__base {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}

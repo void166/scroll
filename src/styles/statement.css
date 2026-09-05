@@ -1,0 +1,35 @@
+.statement {
+  min-height: 118vh;
+  display: grid;
+  align-items: center;
+  padding: clamp(6rem, 20vh, 14rem) 0;
+}
+
+.statement__inner {
+  will-change: transform;
+}
+
+.statement__lines {
+  margin: 0 0 clamp(3rem, 12vh, 8rem);
+  max-width: 15ch;
+}
+
+.statement__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  opacity: 0;
+}
+
+.statement__foot-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .statement__foot-row {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}

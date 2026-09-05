@@ -1,0 +1,51 @@
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(236, 231, 223, 0.45);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.cursor-ring > span {
+  font-family: var(--sans);
+  font-size: 3.4px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.cursor-ring[data-mode='view'] > span {
+  opacity: 1;
+}
+
+.cursor-dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: var(--bone);
+}
+
+/* Touch and low-precision pointers keep the system cursor. */
+@media (hover: none), (pointer: coarse) {
+  .cursor-ring,
+  .cursor-dot {
+    display: none;
+  }
+}

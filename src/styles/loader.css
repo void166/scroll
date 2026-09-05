@@ -1,0 +1,59 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--ink);
+  display: flex;
+  align-items: flex-end;
+  will-change: transform;
+}
+
+.loader__inner {
+  width: 100%;
+  padding: var(--gutter);
+  padding-bottom: clamp(2rem, 6vh, 4rem);
+}
+
+.loader__title {
+  margin: 0 0 clamp(2.5rem, 8vh, 5rem);
+  line-height: 0.94;
+}
+
+.loader__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.loader__line > span {
+  display: block;
+}
+
+.loader__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+
+.loader__count {
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  color: var(--bone);
+}
+
+.loader__rule {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: var(--line-dark);
+  transform-origin: left;
+}
+
+.loader__rule > span {
+  position: absolute;
+  inset: 0;
+  background: var(--bone);
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
+}

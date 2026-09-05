@@ -1,0 +1,40 @@
+/* Masks for the type animations. The hidden initial state lives here so
+   nothing is ever visible for a frame before GSAP claims it. */
+
+/*
+ * The masks clip on the block axis only. `overflow: hidden` would also cut
+ * the side bearings off italics and large serifs — a display face overhangs
+ * its advance width by several pixels at these sizes.
+ *
+ * The bleed is in `em`, not `%`: overhang scales with the type, not with the
+ * width of the box. A percentage on a full-measure wordmark projects an ink
+ * overflow wide enough to extend the document's scrollable area.
+ */
+.reveal-line {
+  display: block;
+  clip-path: inset(0 -0.12em);
+  padding-bottom: 0.04em;
+}
+
+.reveal-line > span {
+  display: block;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.word {
+  display: inline-block;
+  clip-path: inset(0 -0.12em);
+  vertical-align: top;
+}
+
+.word > span {
+  display: inline-block;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+/* Word masks eat the trailing space, so put it back. */
+.word + .word {
+  margin-left: 0.26em;
+}

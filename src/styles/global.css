@@ -1,0 +1,272 @@
+/* ==========================================================================
+   Vela Armon — design system
+   Ink, bone, one serif, one sans. Nothing else.
+   ========================================================================== */
+
+:root {
+  --ink: #0a0a0b;
+  --ink-soft: #131315;
+  --bone: #ece7df;
+  --bone-soft: #f4f0e9;
+  --dust: #8e8880;
+  --line-dark: rgba(236, 231, 223, 0.16);
+  --line-light: rgba(10, 10, 11, 0.14);
+
+  --serif: "Cormorant Garamond", "Times New Roman", Times, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --measure: 34rem;
+
+  /* set by the scroll-driven background scheduler */
+  --page-bg: var(--ink);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /*
+   * `clip`, never `hidden`. `overflow-x: hidden` makes the root a scroll
+   * container, and every `position: sticky` stage on this page then sticks
+   * to that container instead of the viewport — i.e. it does not stick at
+   * all. `clip` trims stray horizontal overflow without that side effect.
+   */
+  overflow-x: clip;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Only the root carries a colour. A background on <body> would paint in the
+ * root stacking context *above* negative-z-index descendants, hiding the
+ * .backdrop entirely — the page tone would be stuck on ink forever.
+ */
+html {
+  background: var(--ink);
+}
+
+body {
+  font-family: var(--sans);
+  font-weight: 300;
+  color: var(--bone);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+body.is-loading {
+  overflow: hidden;
+  height: 100vh;
+}
+
+img,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--bone);
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Page furniture
+   -------------------------------------------------------------------------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: var(--ink);
+  will-change: background-color;
+}
+
+/* Film grain. One tiled SVG noise plate, nudged in steps so it flickers
+   like real emulsion instead of sliding. */
+.grain {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.24;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  animation: grain-shift 0.7s steps(1) infinite;
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  12.5% { transform: translate(-3%, -2%); }
+  25% { transform: translate(2%, -4%); }
+  37.5% { transform: translate(-4%, 3%); }
+  50% { transform: translate(3%, 2%); }
+  62.5% { transform: translate(-2%, 4%); }
+  75% { transform: translate(4%, -3%); }
+  87.5% { transform: translate(-3%, -4%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* A hairline of light that sits over the whole page — vignette + halation. */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 80% at 50% 45%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.32) 100%
+  );
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   Typography
+   -------------------------------------------------------------------------- */
+
+.display {
+  font-family: var(--serif);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.display--xl {
+  font-size: clamp(3.4rem, 13.5vw, 15rem);
+}
+
+.display--lg {
+  font-size: clamp(2.6rem, 8.5vw, 9rem);
+}
+
+.display--md {
+  font-size: clamp(2rem, 5.4vw, 5.2rem);
+  line-height: 1;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: clamp(0.6rem, 0.75vw, 0.72rem);
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin: 0;
+}
+
+.body-text {
+  font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+  line-height: 1.75;
+  font-weight: 300;
+  letter-spacing: 0.005em;
+  color: rgba(236, 231, 223, 0.72);
+  max-width: var(--measure);
+  margin: 0;
+}
+
+.numeral {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: var(--dust);
+}
+
+/* Sections that sit on bone re-tint their own text. */
+.on-light {
+  color: var(--ink);
+}
+
+.on-light .eyebrow {
+  color: rgba(10, 10, 11, 0.45);
+}
+
+.on-light .body-text {
+  color: rgba(10, 10, 11, 0.66);
+}
+
+.on-light .numeral {
+  color: rgba(10, 10, 11, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   Reveal primitives — the initial state lives in CSS so nothing flashes
+   before GSAP takes over.
+   -------------------------------------------------------------------------- */
+
+.reveal-line {
+  display: block;
+  overflow: hidden;
+}
+
+.reveal-line > span {
+  display: block;
+  will-change: transform, opacity;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+}
+
+.wrap {
+  padding-inline: var(--gutter);
+  width: 100%;
+  margin-inline: auto;
+  max-width: 96rem;
+}
+
+.rule {
+  height: 1px;
+  width: 100%;
+  background: var(--line-dark);
+  border: 0;
+  margin: 0;
+}
+
+.on-light .rule {
+  background: var(--line-light);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    animation: none;
+  }
+}

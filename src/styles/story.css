@@ -1,0 +1,114 @@
+.story {
+  height: 560vh;
+}
+
+.story__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.story__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/*
+ * Generous bleed. The plate drifts and rotates while pinned, and on a tall
+ * narrow viewport a 2° rotation swings the top corners a long way sideways
+ * — anything less than this shows the section behind it.
+ */
+.story__plate {
+  position: absolute;
+  inset: -22%;
+  width: 144%;
+  height: 144%;
+  /* The base rule caps images at the container width, which would undo the
+     bleed this element exists for. */
+  max-width: none;
+  object-fit: cover;
+  will-change: transform, filter, clip-path;
+}
+
+.story__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, rgba(10, 10, 11, 0.92) 0%, rgba(10, 10, 11, 0.4) 46%, transparent 78%),
+    linear-gradient(to top, rgba(10, 10, 11, 0.7), transparent 45%);
+  pointer-events: none;
+}
+
+/* Every beat occupies the same optical slot; only one is ever legible. */
+.story__copy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  pointer-events: none;
+}
+
+.story__beat {
+  grid-area: 1 / 1;
+  /* Not `ch`: that resolves against this element's sans font, which would
+     size the column for 16px body copy while the headline inside runs at
+     six times that. */
+  max-width: min(52rem, 88%);
+}
+
+.story__beat-meta {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: clamp(1rem, 3vh, 1.8rem);
+  opacity: 0;
+}
+
+.story__beat-title {
+  /* Its own scale: display--lg is tuned for type on a plain ground, and
+     reads as shouting once it is sitting on top of a photograph. */
+  font-size: clamp(2.3rem, 6.2vw, 6.4rem);
+  line-height: 0.98;
+  margin: 0 0 clamp(1.4rem, 4vh, 2.4rem);
+}
+
+.story__beat-body {
+  max-width: 34ch;
+  opacity: 0;
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+}
+
+.story__hud {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(1.4rem, 4vh, 2.4rem);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .story {
+    height: 480vh;
+  }
+
+  .story__beat-title {
+    font-size: clamp(2.1rem, 10.5vw, 3.6rem);
+    line-height: 1.02;
+  }
+
+  .story__beat-body {
+    max-width: 32ch;
+    /* Copy sits directly on the plate here — buy back the contrast. */
+    color: rgba(236, 231, 223, 0.86);
+  }
+
+  .story__shade {
+    background:
+      linear-gradient(180deg, rgba(10, 10, 11, 0.62) 0%, rgba(10, 10, 11, 0.9) 55%),
+      linear-gradient(to top, rgba(10, 10, 11, 0.85), transparent 55%);
+  }
+}
